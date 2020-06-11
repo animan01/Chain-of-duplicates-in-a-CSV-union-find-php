@@ -1,8 +1,8 @@
 Problem/Motivation
 --
-Find duplicates in CSV file. The problem was the related search for duplicates in the data table. As required, need to find a duplicate from the key fields (in any field) and assign the **PARENT_ID** record of the first occurrence of the duplicate.
+Find duplicates in CSV file. The problem was the related search for duplicates in the data table. On demand there is a need to find a duplicate from key fields (in any field) and to assign the first duplicate occurrence to **PARENT_ID**.
 
-The algorithm on PHP is finds chain of duplicates and generates a result with **ID** and **PARENT_ID**.
+The algorithm finding a chain of duplicates and generates result with **ID** and **PARENT_ID** was created.
 
 Example of input data (based on the csv file):
 ```
