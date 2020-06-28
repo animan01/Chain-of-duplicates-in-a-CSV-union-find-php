@@ -8,6 +8,8 @@ Find duplicates in CSV file. The problem was the related search for duplicates i
 
 Union find algorithm implemented on PHP, finding a chain of duplicates and generates result with **ID** and **PARENT_ID** was created.
 
+Since there were no similar implementations of Union find algorithm, it was decided to write it yourself on PHP.
+
 Example of input data (based on the csv file):
 ```
 ID,PARENT_ID,EMAIL,CARD,PHONE,TMP
