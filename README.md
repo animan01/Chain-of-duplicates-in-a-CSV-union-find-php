@@ -14,16 +14,20 @@ Example of input data (based on the csv file):
 ```
 ID,PARENT_ID,EMAIL,CARD,PHONE,TMP
 1,NULL,email1,card1,phone1,
-2,NULL,email2,card2,phone2,
+2,NULL,email2,card1,phone2,
 3,NULL,email3,card3,phone3,
 4,NULL,email1,card2,phone4,
 5,NULL,email5,card5,phone2,
 6,NULL,email6,card6,phone6,
 7,NULL,email3,card9,phone7,
 8,NULL,email8,card10,phone8,
-9,NULL,email9,card9,phone3,     
-10,NULL,email10,card10,phone10,
+9,NULL,email9,card9,phone3,
+10,NULL,email2,card10,phone10,
 ```
+
+In the example of the element with **ID 10** it was associated with 2,8,4,1. Original duplicate 1. Brief visualization of dependencies:
+- **ID1 => ID2 => ID10 => ID8**
+
 
 Require
 --
