@@ -84,9 +84,9 @@ foreach ($fields_array as $key => $array) {
   }
 
   // Save fields to mapping.
-  $mapping_fields[$array['EMAIL']] = $group_key;
-  $mapping_fields[$array['CARD']] = $group_key;
-  $mapping_fields[$array['PHONE']] = $group_key;
+  foreach (DUPLICATES_FIELDS as $field) {
+    $mapping_fields[$array[$field]] = $group_key;
+  }
 
 }
 
@@ -101,7 +101,14 @@ foreach ($fields_array as $key => $array) {
   foreach (DUPLICATES_FIELDS as $field) {
     $parent_ids[] = $grouping_key[$mapping_fields[$array[$field]]];
   }
-  $fields_array[$key]['PARENT_ID'] = min($parent_ids);
+  $parent_id = min($parent_ids);
+
+  // Update mapping by new PARENT_ID.
+  foreach (DUPLICATES_FIELDS as $field) {
+    $mapping_fields[$array[$field]] = array_search($parent_id, $grouping_key);
+  }
+
+  $fields_array[$key]['PARENT_ID'] = $parent_id;
 
   // Prepare data from csv.
   if ($key !== 0) {
