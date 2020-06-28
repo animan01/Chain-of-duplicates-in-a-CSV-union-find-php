@@ -41,14 +41,14 @@ Demo results
 ```
 ID,PARENT_ID
 1,1
-2,2
+2,1
 3,3
 4,1
-5,2
+5,1
 6,6
 7,3
-8,8
+8,1
 9,3
-10,8
+10,1
 ```
 PS. Вы можете проверить результат здесь: http://sandbox.onlinephpfunctions.com/
