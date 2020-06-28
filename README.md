@@ -1,8 +1,12 @@
+Alhoritm
+--
+[Disjoint-set/Union-find Forest](https://en.wikipedia.org/wiki/Disjoint-set_data_structure)
+
 Problem/Motivation
 --
 Find duplicates in CSV file. The problem was the related search for duplicates in the data table. On demand there is a need to find a duplicate from key fields (in any field) and to assign the first duplicate occurrence to **PARENT_ID**.
 
-The algorithm finding a chain of duplicates and generates result with **ID** and **PARENT_ID** was created.
+Union find algorithm implemented on PHP, finding a chain of duplicates and generates result with **ID** and **PARENT_ID** was created.
 
 Example of input data (based on the csv file):
 ```

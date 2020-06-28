@@ -2,15 +2,17 @@
 /**
  * Find Chain of duplicates in a CSV file.
  *
- * @author  Roman Zakharchuk <extatic.dancer@gmail.com>
  * @author  Volodymyr Melnychuk <540991@i.ua>
  *
  */
 
+// Define constants.
+define('FIELDS', ['EMAIL', 'CARD', 'PHONE']);
+
 // Default example data.
 $csv = 'ID,PARENT_ID,EMAIL,CARD,PHONE,TMP
 1,NULL,email1,card1,phone1,
-2,NULL,email2,card2,phone2,
+2,NULL,email2,card1,phone2,
 3,NULL,email3,card3,phone3,
 4,NULL,email1,card2,phone4,                                                                                                                                                          
 5,NULL,email5,card5,phone2,
@@ -36,97 +38,62 @@ foreach ($rows as $key => $row) {
   ];
 }
 
-// Get all rows for fields.
-$ids = array_column($fields_array, 'ID');
-$emails = array_column($fields_array, 'EMAIL');
-$cars = array_column($fields_array, 'CARD');
-$phones = array_column($fields_array, 'PHONE');
-
-$results = [];
 $csv_string = 'ID,PARENT_ID' . PHP_EOL;
 
-// Prepare data for csv.
+$mapping_fields = [];
+
+// Find duplicates and save to mapping.
 foreach ($fields_array as $key => $array) {
 
-  $ids_by_mail = get_duplicate_array($emails, 'EMAIL', $array['EMAIL']);
-  $ids_by_card = get_duplicate_array($cars, 'CARD', $array['CARD']);
-  $ids_by_phone = get_duplicate_array($phones, 'PHONE', $array['PHONE']);
-
-  $min_ids = [
-    min($ids_by_mail),
-    min($ids_by_card),
-    min($ids_by_phone),
-  ];
-
-  $min_id = min($min_ids);
-
-  fill_results($ids_by_mail, $results, $min_id);
-  fill_results($ids_by_card, $results, $min_id);
-  fill_results($ids_by_phone, $results, $min_id);
-
-}
-
-ksort($results);
-
-// Prepare string for csv.
-foreach ($results as $key => $result) {
-  if ($key !== 0) {
-    $csv_string .= implode(',', [$key, $results[$key]['PARENT_ID']]) . PHP_EOL;
-  }
-}
-
-//print_r($results);
-// Show results as string.
-print_r($csv_string);
-
-/**
- * Return founded duplicates key.
- *
- * @param array $array
- *    Array with fields.
- * @param $column
- *    Field name.
- * @param $string
- *    Search string.
- *
- * @return array|bool
- */
-function get_duplicate_array($array, $column, $string) {
-
-  $results = array_filter($array,
-    function ($value) use ($string) {
-      if ($value === $string) {
-        return TRUE;
-      }
-      return FALSE;
-    },
-    ARRAY_FILTER_USE_BOTH);
-
-  $results = array_fill_keys(array_keys($results), min(array_keys($results)));
-
-  if (count($results) > 0) {
-    return $results;
-  }
-  else {
-    return [];
+  // Skip first element in array.
+  if ($key === 0) {
+    continue;
   }
 
-}
+  // Set default value for each iteration.
+  $group = NULL;
+  $group_to_merge = [];
 
-/**
- * Get fill results.
- *
- * @param $array
- *   Array.
- * @param $results
- *   Row results.
- * @param $min_id
- *  Minimal ID.
- */
-function fill_results($array, &$results, $min_id) {
-  foreach ($array as $id => $value) {
-    if (empty($results[$id]) || $results[$id] > $min_id) {
-      $results[$id]['PARENT_ID'] = $min_id;
+  // Grouping by fields.
+  foreach (FIELDS as $field) {
+    $field_value = $array[$field];
+    if (array_key_exists($array[$field], $mapping_fields)) {
+      $group = $mapping_fields[$field_value];
+      $group_to_merge[] = $group;
     }
   }
+
+  // Setting minimal group if have more one group ID.
+  if (count($group_to_merge) > 1) {
+    $group = min($group_to_merge);
+  }
+
+  // Setting group if do not have any duplicates.
+  if ($group === NULL) {
+    $group = $array['ID'];
+  }
+
+  // Save fields to mapping.
+  $mapping_fields[$array['EMAIL']] = $group;
+  $mapping_fields[$array['CARD']] = $group;
+  $mapping_fields[$array['PHONE']] = $group;
+
 }
+
+foreach ($fields_array as $key => $array) {
+  // Skip first element in array.
+  if ($key === 0) {
+    continue;
+  }
+  // Searching PARENT_ID by email field. May be any field (like: CARD, PHONE).
+  $fields_array[$key]['PARENT_ID'] = $mapping_fields[$array['EMAIL']];
+
+  // Prepare data from csv.
+  if ($key !== 0) {
+    $csv_string .= implode(',',
+        [$key, $fields_array[$key]['PARENT_ID']]) . PHP_EOL;
+  }
+}
+
+// Show results as string.
+print_r($csv_string);
